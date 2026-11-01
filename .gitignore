@@ -1,0 +1,7 @@
+_site/
+.latest-tool/
+build.log
+__pycache__/
+*.pyc
+# never commit the resume in plain text: Publish writes resume.json.enc
+resume.json

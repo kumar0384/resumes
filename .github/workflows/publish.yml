@@ -1,0 +1,122 @@
+# Rebuilds the site on every push and deploys it to GitHub Pages.
+#
+# The resume is stored encrypted (resume.json.enc). This workflow decrypts it with the
+# RESUME_SITE_KEY repository secret and publishes it under a secret folder derived from
+# that key, so it's only reachable by its private link. The plain address shows an empty page.
+# Nothing readable about the resume is written to the logs or the run summary, and the
+# downloadable build is deleted right after deploying.
+#
+# One-time setup:
+#   1. Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"
+#   2. Settings -> Secrets and variables -> Actions -> New repository secret:
+#      RESUME_SITE_KEY = the key from the resume_builder app (Live site -> Site key...)
+#
+# Optional: RESUME_BUILDER_TOKEN (read-only token for the private resume_builder repo)
+# builds with its latest version instead of the copy in tool/.
+
+name: Publish resume site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TOOL_TOKEN: ${{ secrets.RESUME_BUILDER_TOKEN }}
+      RESUME_SITE_KEY: ${{ secrets.RESUME_SITE_KEY }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Check out latest resume_builder (only if RESUME_BUILDER_TOKEN is set)
+        if: env.TOOL_TOKEN != ''
+        uses: actions/checkout@v7
+        with:
+          repository: kumar0384/resume_builder
+          token: ${{ secrets.RESUME_BUILDER_TOKEN }}
+          path: .latest-tool
+
+      - name: Choose tool version
+        run: |
+          if [ -d .latest-tool/resume_builder ]; then
+            echo "TOOL_DIR=$PWD/.latest-tool" >> "$GITHUB_ENV"
+          else
+            echo "TOOL_DIR=$PWD/tool" >> "$GITHUB_ENV"
+          fi
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install fonts and dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-crosextra-caladea fonts-crosextra-carlito
+          pip install -q -r tool/requirements.txt
+
+      - name: Build site
+        run: |
+          export PYTHONPATH="$TOOL_DIR"
+          if [ -f resume.json.enc ]; then
+            if [ -z "$RESUME_SITE_KEY" ]; then
+              echo "::error::The resume is encrypted but the RESUME_SITE_KEY secret isn't set. Add it under Settings > Secrets and variables > Actions (resume_builder app: Live site > Site key... > Yes copies it)."
+              exit 1
+            fi
+            echo "::add-mask::$(python -m resume_builder.cli token --key-env RESUME_SITE_KEY)"
+            if ! python -m resume_builder.cli site resume.json.enc _site --key-env RESUME_SITE_KEY --secret-path; then
+              echo "::error::Couldn't decrypt the resume. The RESUME_SITE_KEY secret must be the same key the app uses (Live site > Site key...)."
+              exit 1
+            fi
+            echo "Private site built. Your link is in the resume_builder app: Live site > Copy link." >> "$GITHUB_STEP_SUMMARY"
+          else
+            python -m resume_builder.cli blank _site
+            echo "Nothing published yet, so an empty site was deployed. Publish from the resume_builder app." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  cleanup:
+    # The build artifact holds the decrypted site; in a public repo any signed-in
+    # GitHub user could download it, so delete it as soon as it's deployed.
+    needs: deploy
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete this run's downloadable build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for id in $(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" --jq '.artifacts[].id'); do
+            gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$id"
+            echo "Deleted build artifact $id"
+          done

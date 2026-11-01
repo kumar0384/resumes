@@ -1,0 +1,135 @@
+{
+  "schema_version": 2,
+  "contact": {
+    "name": "[Full Name]",
+    "headline": "[Target Title] | [Specialty 1] | [Specialty 2]",
+    "email": "[name@email.com]",
+    "phone": "[+1 555 555 5555]",
+    "location": "[City, State]",
+    "linkedin": "[linkedin.com/in/yourname]",
+    "website": "[github.com/yourname]",
+    "work_authorization": ""
+  },
+  "summary": "[Title] with [N] years of experience in [domain], specializing in [2-3 core strengths]. Currently [lead/manage] [team size or scope] delivering [type of work]. Known for [signature result, quantified]. Seeking to [what you want next, in the employer's terms].",
+  "core_skills": [
+    {
+      "category": "Tools & software",
+      "items": [
+        "[Primary tool]",
+        "[Secondary tool]",
+        "[CAD/PLM tool]",
+        "[Scripting language]",
+        "[Data/reporting tool]"
+      ]
+    },
+    {
+      "category": "Codes & standards",
+      "items": [
+        "[Design code]",
+        "[Industry standard]",
+        "[Quality standard]",
+        "[Drawing/tolerancing standard]"
+      ]
+    },
+    {
+      "category": "Analysis methods",
+      "items": [
+        "[Method 1]",
+        "[Method 2]",
+        "[Method 3]",
+        "[Verification/testing method]"
+      ]
+    },
+    {
+      "category": "Leadership & delivery",
+      "items": [
+        "[Team leadership]",
+        "[Mentoring]",
+        "[Design reviews]",
+        "[Stakeholder management]"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "title": "[Most recent title, e.g. Lead Engineer]",
+      "company": "[Company]",
+      "location": "[City, State]",
+      "start": "[YYYY-MM]",
+      "end": "Present",
+      "team_size": "[N]",
+      "scope": "[One line: product, programme, budget or customers you own]",
+      "highlights": [
+        "Led [N] engineers to [deliver what], [result with number] ([% / $ / time]).",
+        "[Action verb] [what you did] using [tool/method], reducing [metric] by [N%].",
+        "[Action verb] [process or standard] adopted across [team/site], saving [N hours/$].",
+        "Mentored [N] engineers; [outcome, e.g. promotion, certification, independence]."
+      ]
+    },
+    {
+      "title": "[Previous title, e.g. Senior Engineer]",
+      "company": "[Company]",
+      "location": "[City, State]",
+      "start": "[YYYY-MM]",
+      "end": "[YYYY-MM]",
+      "team_size": "",
+      "scope": "[One line of context]",
+      "highlights": [
+        "[Action verb] [what] for [project/customer], achieving [quantified result].",
+        "[Action verb] [analysis/design] that [cut cost/weight/time] by [N%].",
+        "[Action verb] [first leadership signal: led a workstream, trained new hires]."
+      ]
+    },
+    {
+      "title": "[Earlier title, e.g. Engineer]",
+      "company": "[Company]",
+      "location": "[City, State]",
+      "start": "[YYYY-MM]",
+      "end": "[YYYY-MM]",
+      "team_size": "",
+      "scope": "",
+      "highlights": [
+        "[Action verb] [what] resulting in [quantified result].",
+        "[Action verb] [what] resulting in [quantified result]."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "[Degree, Major]",
+      "institution": "[University]",
+      "location": "[City, Country]",
+      "year": "[YYYY]",
+      "details": "[Optional: thesis, honors, relevant coursework]"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "[Certification, e.g. PE / PMP / Six Sigma Green Belt]",
+      "issuer": "[Issuing body]",
+      "year": "[YYYY]"
+    }
+  ],
+  "projects": [
+    {
+      "name": "[Project name]",
+      "tagline": "[Short subtitle, e.g. Open-source FEA desktop app]",
+      "tech": [
+        "[Language]",
+        "[Library]",
+        "[Tool]"
+      ],
+      "description": "[One or two sentences: what it does and who uses it]",
+      "highlights": [
+        "[Result with a number, e.g. used by N teams / cut X from N days to N hours]"
+      ],
+      "link": "[github.com/you/project]",
+      "demo": "",
+      "images": []
+    }
+  ],
+  "additional": [
+    "Languages: [Language (level)], [Language (level)]",
+    "Publications / patents: [Title, venue, year]"
+  ]
+}
